@@ -1,0 +1,508 @@
+import React, { useState } from 'react';
+import { 
+  Banknote, 
+  Brain, 
+  Cpu, 
+  Users, 
+  GraduationCap, 
+  ShoppingBag, 
+  Home, 
+  Clock, 
+  Search, 
+  CheckCircle2, 
+  Copy, 
+  Check, 
+  Sparkles,
+  Filter,
+  X,
+  Wand2,
+  Loader2,
+  Bot
+} from 'lucide-react';
+
+const ContentPlanner = () => {
+  // --- INITIAL DATA ---
+  const initialData = [
+    {
+      id: 'finance',
+      category: 'Finance & Business',
+      icon: <Banknote className="w-6 h-6 text-emerald-500" />,
+      color: 'bg-emerald-50 border-emerald-200',
+      items: [
+        "Budget Planning", "Personal Finance Planning", "Financial Stress", "Invoice Deadline",
+        "Monthly Billing", "Quarterly Report", "Annual Report", "Startup Pitch",
+        "Business Forecast", "Cash Flow Management", "Payroll Day", "Tax Refund",
+        "Audit Season", "Layoffs", "Hiring Season", "Business Growth",
+        "Business Failure", "Investment Planning", "Retirement Planning"
+      ]
+    },
+    {
+      id: 'health',
+      category: 'Mental Health & Wellness',
+      icon: <Brain className="w-6 h-6 text-rose-500" />,
+      color: 'bg-rose-50 border-rose-200',
+      items: [
+        "Mental Health Awareness", "Burnout", "Work Stress", "Anxiety",
+        "Depression Awareness", "Self Care", "Therapy Session", "Healthy Lifestyle",
+        "Fitness Motivation", "Weight Loss Program", "Diet Planning", "Sleep Disorder",
+        "Meditation", "Mindfulness", "Emotional Healing"
+      ]
+    },
+    {
+      id: 'tech',
+      category: 'Teknologi & Digital Life',
+      icon: <Cpu className="w-6 h-6 text-blue-500" />,
+      color: 'bg-blue-50 border-blue-200',
+      items: [
+        "Artificial Intelligence", "Automation", "Machine Learning Concept", "Data Privacy",
+        "Cyber Security", "Remote Work", "Hybrid Work", "Digital Nomad Life",
+        "App Launch", "SaaS Subscription", "System Update", "Software Bug / Error",
+        "Online Meeting", "Virtual Team", "Digital Detox"
+      ]
+    },
+    {
+      id: 'social',
+      category: 'Kehidupan Sosial & Modern',
+      icon: <Users className="w-6 h-6 text-purple-500" />,
+      color: 'bg-purple-50 border-purple-200',
+      items: [
+        "Work-Life Balance", "Career Change", "New Job", "Job Interview",
+        "Resignation", "Promotion", "Office Politics", "Teamwork",
+        "Leadership", "Employee Motivation", "Overtime Work", "Deadline Pressure",
+        "Career Failure", "Personal Success"
+      ]
+    },
+    {
+      id: 'edu',
+      category: 'Edukasi & Pengembangan Diri',
+      icon: <GraduationCap className="w-6 h-6 text-yellow-600" />,
+      color: 'bg-yellow-50 border-yellow-200',
+      items: [
+        "Online Learning", "E-learning Platform", "Exam Stress", "Graduation Exam",
+        "Skill Upgrade", "Language Learning", "Certification Program", "Internship Season",
+        "Study Abroad", "Personal Development", "Productivity Improvement"
+      ]
+    },
+    {
+      id: 'marketing',
+      category: 'Marketing & E-Commerce',
+      icon: <ShoppingBag className="w-6 h-6 text-orange-500" />,
+      color: 'bg-orange-50 border-orange-200',
+      items: [
+        "Product Launch", "Product Promotion", "Customer Review", "Brand Loyalty",
+        "Subscription Renewal", "Flash Sale", "Referral Program", "Loyalty Program",
+        "Abandoned Cart", "Upselling", "Cross Selling", "Customer Support"
+      ]
+    },
+    {
+      id: 'home',
+      category: 'Rumah, Keluarga & Gaya Hidup',
+      icon: <Home className="w-6 h-6 text-teal-500" />,
+      color: 'bg-teal-50 border-teal-200',
+      items: [
+        "Buying House", "Selling House", "Moving House", "Home Office Setup",
+        "Interior Design", "Family Time", "Parenting", "Pregnancy",
+        "Baby Shower", "Child Education", "Retirement Life"
+      ]
+    },
+    {
+      id: 'micro',
+      category: 'Micro-Moment (Kecil tapi Laku)',
+      icon: <Clock className="w-6 h-6 text-gray-600" />,
+      color: 'bg-gray-100 border-gray-300',
+      items: [
+        "Monday Motivation", "Coffee Break", "Team Meeting", "Brainstorming",
+        "Late Night Work", "Weekend Relax", "Morning Routine", "Work From Cafe",
+        "Waiting Deadline", "Last Minute Rush"
+      ]
+    }
+  ];
+
+  // --- STATE ---
+  const [data, setData] = useState(initialData);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [checkedItems, setCheckedItems] = useState({});
+  const [copiedId, setCopiedId] = useState(null);
+  
+  // AI States
+  const [generatingCategory, setGeneratingCategory] = useState(null); // ID of category currently generating ideas
+  const [draftingItem, setDraftingItem] = useState(null); // Item name currently being drafted
+  const [modalOpen, setModalOpen] = useState(false);
+  const [aiDraft, setAiDraft] = useState('');
+  const [currentDraftTopic, setCurrentDraftTopic] = useState('');
+
+  // --- GEMINI API HELPERS ---
+  const callGeminiAPI = async (prompt) => {
+    const apiKey = ""; // Injected by environment
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+    
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }]
+        })
+      });
+      
+      const result = await response.json();
+      if (result.error) throw new Error(result.error.message);
+      return result.candidates?.[0]?.content?.parts?.[0]?.text || "Gagal mendapatkan respon dari AI.";
+    } catch (error) {
+      console.error("Gemini Error:", error);
+      return "Maaf, terjadi kesalahan saat menghubungi AI. Coba lagi nanti.";
+    }
+  };
+
+  // --- HANDLERS ---
+  const toggleCheck = (item) => {
+    setCheckedItems(prev => ({
+      ...prev,
+      [item]: !prev[item]
+    }));
+  };
+
+  const handleCopy = (categoryName, items, id) => {
+    const text = `${categoryName}\n\n${items.map(i => `- ${i}`).join('\n')}`;
+    navigator.clipboard.writeText(text);
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(null), 2000);
+  };
+
+  // Feature 1: AI Brainstorming (Add more items to category)
+  const handleGenerateMoreIdeas = async (categoryId, categoryName) => {
+    setGeneratingCategory(categoryId);
+    
+    const prompt = `Act as a creative content strategist. Give me 5 NEW, specific, and trendy content ideas for the category "${categoryName}". 
+    Do not repeat generic terms. Make them catchy. Return ONLY the list of 5 items, separated by newlines, no numbering, no intro text.`;
+
+    const result = await callGeminiAPI(prompt);
+    
+    if (result) {
+      const newItems = result.split('\n').filter(line => line.trim().length > 0).map(line => line.replace(/^[-\d\.]+\s*/, '').trim());
+      
+      setData(prevData => prevData.map(cat => {
+        if (cat.id === categoryId) {
+          return { ...cat, items: [...cat.items, ...newItems] };
+        }
+        return cat;
+      }));
+    }
+    
+    setGeneratingCategory(null);
+  };
+
+  // Feature 2: AI Draft Content
+  const handleDraftContent = async (item, e) => {
+    e.stopPropagation(); // Prevent toggling check
+    setDraftingItem(item);
+    setCurrentDraftTopic(item);
+    setModalOpen(true);
+    setAiDraft(''); // Clear previous draft
+
+    const prompt = `Buatlah draft caption Instagram/LinkedIn yang menarik untuk topik konten: "${item}".
+    Format output:
+    1. Hook/Headline yang menarik perhatian.
+    2. Isi konten singkat (2-3 paragraf pendek) yang memberikan nilai/tips.
+    3. Call to Action (CTA) yang mengundang interaksi.
+    4. 5-7 Hashtag relevan dalam Bahasa Indonesia atau Inggris.
+    Gunakan gaya bahasa yang santai namun profesional. Sertakan emoji yang relevan.`;
+
+    const result = await callGeminiAPI(prompt);
+    setAiDraft(result);
+    setDraftingItem(null);
+  };
+
+  const getFilteredData = () => {
+    return data.filter(cat => {
+      const matchCategory = selectedCategory === 'All' || cat.category === selectedCategory;
+      const matchSearch = cat.items.some(item => item.toLowerCase().includes(searchTerm.toLowerCase())) || 
+                          cat.category.toLowerCase().includes(searchTerm.toLowerCase());
+      return matchCategory && matchSearch;
+    });
+  };
+
+  const clearFilters = () => {
+    setSearchTerm('');
+    setSelectedCategory('All');
+  };
+
+  return (
+    <div className="min-h-screen bg-slate-50 text-slate-800 font-sans selection:bg-indigo-100 selection:text-indigo-900">
+      
+      {/* HEADER HERO */}
+      <div className="bg-white border-b border-slate-200 sticky top-0 z-20 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent flex items-center gap-2">
+                <Sparkles className="text-indigo-600 w-6 h-6" />
+                Content Momentum Planner
+                <span className="text-xs font-normal px-2 py-0.5 bg-indigo-100 text-indigo-700 rounded-full border border-indigo-200 ml-2 align-middle">
+                  AI Powered ✨
+                </span>
+              </h1>
+              <p className="text-slate-500 text-sm mt-1">
+                Database ide konten evergreen & musiman dengan asisten AI.
+              </p>
+            </div>
+            
+            {/* SEARCH BAR */}
+            <div className="relative w-full md:w-96 group">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Search className="h-5 w-5 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
+              </div>
+              <input
+                type="text"
+                className="block w-full pl-10 pr-3 py-2.5 border border-slate-200 rounded-xl leading-5 bg-slate-50 placeholder-slate-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition-all shadow-sm"
+                placeholder="Cari ide (ex: Tax, Burnout)..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              {searchTerm && (
+                <button 
+                  onClick={() => setSearchTerm('')}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer text-slate-400 hover:text-slate-600"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* CATEGORY TABS (Scrollable) */}
+          <div className="mt-6 flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+            <button
+              onClick={() => setSelectedCategory('All')}
+              className={`px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
+                selectedCategory === 'All' 
+                  ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200' 
+                  : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
+              }`}
+            >
+              All Topics
+            </button>
+            {data.map((cat) => (
+              <button
+                key={cat.id}
+                onClick={() => setSelectedCategory(cat.category)}
+                className={`px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-all flex items-center gap-2 ${
+                  selectedCategory === cat.category 
+                    ? 'bg-slate-800 text-white shadow-lg' 
+                    : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 hover:border-slate-300'
+                }`}
+              >
+                {/* Clone icon with smaller size for tab */}
+                {React.cloneElement(cat.icon, { className: "w-4 h-4" })}
+                {cat.category.split(' ')[0]}...
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* MAIN CONTENT GRID */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        {getFilteredData().length === 0 ? (
+          <div className="text-center py-20">
+            <div className="inline-flex bg-slate-100 p-4 rounded-full mb-4">
+              <Search className="w-8 h-8 text-slate-400" />
+            </div>
+            <h3 className="text-lg font-medium text-slate-900">Tidak ada ide ditemukan</h3>
+            <p className="text-slate-500 mt-2">Coba kata kunci lain atau reset filter Anda.</p>
+            <button 
+              onClick={clearFilters}
+              className="mt-6 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+            >
+              Reset Filter
+            </button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 items-start">
+            {getFilteredData().map((group) => (
+              <div 
+                key={group.id} 
+                className={`group rounded-2xl border ${group.color.replace('bg-', 'bg-opacity-40 ')} bg-white hover:shadow-xl hover:shadow-slate-200/50 hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col h-full`}
+              >
+                {/* CARD HEADER */}
+                <div className={`px-5 py-4 border-b border-dashed ${group.color.replace('bg-', 'border-').split(' ')[1]} flex items-start justify-between bg-white/50 backdrop-blur-sm`}>
+                  <div className="flex items-center gap-3">
+                    <div className={`p-2 rounded-xl bg-white shadow-sm border border-slate-100`}>
+                      {group.icon}
+                    </div>
+                    <h2 className="font-bold text-slate-800 leading-tight text-sm">
+                      {group.category}
+                    </h2>
+                  </div>
+                  {/* AI BRAINSTORM BUTTON */}
+                  <button 
+                    onClick={() => handleGenerateMoreIdeas(group.id, group.category)}
+                    disabled={generatingCategory === group.id}
+                    className="p-1.5 rounded-lg text-indigo-600 hover:bg-indigo-50 transition-colors disabled:opacity-50"
+                    title="Generate 5 more ideas with AI"
+                  >
+                    {generatingCategory === group.id ? (
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                    ) : (
+                      <Sparkles className="w-5 h-5" />
+                    )}
+                  </button>
+                </div>
+
+                {/* CARD LIST */}
+                <div className="p-4 flex-1">
+                  <ul className="space-y-1">
+                    {group.items.map((item, idx) => {
+                      // Highlighting search term logic
+                      const isMatch = searchTerm && item.toLowerCase().includes(searchTerm.toLowerCase());
+                      const isChecked = checkedItems[item];
+                      const isDraftingThis = draftingItem === item;
+
+                      return (
+                        <li 
+                          key={idx}
+                          onClick={() => toggleCheck(item)}
+                          className={`
+                            group/item flex items-center justify-between gap-2 p-2 rounded-lg cursor-pointer transition-all select-none
+                            ${isMatch ? 'bg-indigo-50 ring-1 ring-indigo-200' : 'hover:bg-slate-50'}
+                            ${isChecked ? 'opacity-50 grayscale' : 'opacity-100'}
+                          `}
+                        >
+                          <div className="flex items-center gap-3 overflow-hidden">
+                            <div className={`
+                              flex-shrink-0 w-5 h-5 rounded-md border flex items-center justify-center transition-colors
+                              ${isChecked 
+                                ? 'bg-indigo-500 border-indigo-500 text-white' 
+                                : 'border-slate-300 bg-white group-hover/item:border-indigo-400'}
+                            `}>
+                              {isChecked && <Check className="w-3.5 h-3.5" strokeWidth={3} />}
+                            </div>
+                            <span className={`text-sm font-medium truncate ${isChecked ? 'line-through text-slate-400' : 'text-slate-700'}`}>
+                              {item}
+                            </span>
+                          </div>
+                          
+                          {/* AI DRAFT BUTTON (Hover only) */}
+                          <button
+                            onClick={(e) => handleDraftContent(item, e)}
+                            className={`
+                              p-1.5 rounded-md text-slate-400 hover:text-indigo-600 hover:bg-indigo-100 transition-all opacity-0 group-hover/item:opacity-100
+                              ${isDraftingThis ? 'opacity-100 text-indigo-600 bg-indigo-50' : ''}
+                            `}
+                            title="Draft content with AI"
+                          >
+                            {isDraftingThis ? <Loader2 className="w-4 h-4 animate-spin" /> : <Wand2 className="w-4 h-4" />}
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+
+                {/* CARD FOOTER */}
+                <div className="px-4 py-3 bg-slate-50/80 border-t border-slate-100 flex justify-between items-center text-xs text-slate-500">
+                  <span>{group.items.length} Ideas</span>
+                  <button 
+                    onClick={() => handleCopy(group.category, group.items, group.id)}
+                    className="flex items-center gap-1.5 px-2 py-1 rounded hover:bg-slate-200/80 text-slate-600 transition-colors"
+                  >
+                    {copiedId === group.id ? (
+                      <>
+                        <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                        <span className="text-emerald-700 font-medium">Copied!</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-4 h-4" />
+                        <span>Copy List</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </main>
+
+      {/* AI DRAFT MODAL */}
+      {modalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
+            {/* Modal Header */}
+            <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-gradient-to-r from-indigo-50 to-white">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-indigo-100 rounded-lg text-indigo-600">
+                  <Bot className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-slate-800">AI Content Drafter</h3>
+                  <p className="text-sm text-slate-500">Drafting for: <span className="font-medium text-indigo-600">{currentDraftTopic}</span></p>
+                </div>
+              </div>
+              <button 
+                onClick={() => setModalOpen(false)}
+                className="p-2 hover:bg-slate-100 rounded-full text-slate-400 hover:text-slate-600 transition-colors"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6 overflow-y-auto bg-slate-50/50">
+              {aiDraft ? (
+                <div className="prose prose-slate prose-sm max-w-none bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                  <div className="whitespace-pre-wrap font-medium text-slate-700 leading-relaxed">
+                    {aiDraft}
+                  </div>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center py-12 text-center">
+                  <Loader2 className="w-10 h-10 text-indigo-600 animate-spin mb-4" />
+                  <p className="text-slate-600 font-medium">Sedang menulis draft kreatif...</p>
+                  <p className="text-slate-400 text-sm mt-2">AI sedang mencari hook terbaik untuk Anda.</p>
+                </div>
+              )}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="px-6 py-4 border-t border-slate-100 bg-white flex justify-end gap-3">
+              <button 
+                onClick={() => setModalOpen(false)}
+                className="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg font-medium transition-colors"
+              >
+                Tutup
+              </button>
+              <button 
+                disabled={!aiDraft}
+                onClick={() => {
+                  navigator.clipboard.writeText(aiDraft);
+                  // Optional: Show toast
+                }}
+                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium flex items-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <Copy className="w-4 h-4" />
+                Salin Draft
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* FLOATING CTA FOR MOBILE */}
+      <div className="fixed bottom-6 right-6 md:hidden">
+        <button 
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          className="bg-indigo-600 text-white p-4 rounded-full shadow-lg shadow-indigo-500/30 hover:bg-indigo-700 active:scale-95 transition-all"
+        >
+          <Search className="w-6 h-6" />
+        </button>
+      </div>
+
+    </div>
+  );
+};
+
+export default ContentPlanner;
