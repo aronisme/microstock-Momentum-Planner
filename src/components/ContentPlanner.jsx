@@ -52,37 +52,71 @@ const ContentPlanner = () => {
         { date: '2025-12-25', title: "Hari Natal", type: 'holiday' },
     ];
 
-    // --- SPOTLIGHT DATA (Translated & Vibrantly Colored) ---
-    const spotlightItems = [
-        {
-            title: "Musim Semi (Spring)",
-            targetDate: "Maret - Mei",
-            urgency: "Tinggi",
-            desc: "Bunga bermekaran, bersih-bersih rumah, alergi, gaya hidup outdoor.",
-            color: "bg-gradient-to-br from-pink-50 to-rose-50 border-pink-200 text-pink-700 hover:border-pink-300"
-        },
-        {
-            title: "Ramadan & Idul Fitri",
-            targetDate: "Feb - Maret",
-            urgency: "Kritis",
-            desc: "Kumpul keluarga, ibadah, kurma, lampion, zakat/donasi.",
-            color: "bg-gradient-to-br from-emerald-50 to-teal-50 border-emerald-200 text-emerald-700 hover:border-emerald-300"
-        },
-        {
-            title: "Hari Perempuan",
-            targetDate: "8 Maret",
-            urgency: "Sedang",
-            desc: "Pemberdayaan wanita, karir beragam, konsep kesetaraan.",
-            color: "bg-gradient-to-br from-purple-50 to-violet-50 border-purple-200 text-purple-700 hover:border-purple-300"
-        },
-        {
-            title: "Paskah (Easter)",
-            targetDate: "Akhir Maret",
-            urgency: "Sedang",
-            desc: "Telur hias, kelinci, warna pastel, makan siang keluarga.",
-            color: "bg-gradient-to-br from-yellow-50 to-amber-50 border-yellow-200 text-amber-700 hover:border-amber-300"
-        }
-    ];
+    // --- DYNAMIC SPOTLIGHT LOGIC (3-Month Lead Time) ---
+    const getDynamicSpotlight = () => {
+        const today = new Date();
+        const currentMonth = today.getMonth(); // 0 = Jan
+
+        // Microstock Strategy: Shoot 2-4 months ahead
+        // database of events by target month (0-11)
+        const seasonalDb = [
+            { id: '1', month: 0, title: "Valentine & Imlek", match: [10, 11, 0], desc: "Romantis, merah muda, lampion, naga, amplop merah, couple goals.", color: "pink" },
+            { id: '2', month: 2, title: "Musim Semi (Spring)", match: [0, 1, 2], desc: "Bunga, bersih-bersih rumah, alergi, outdoor, fresh start.", color: "emerald" },
+            { id: '3', month: 2, title: "Ramadan & Idul Fitri", match: [0, 1, 2], desc: "Ibadah, keluarga, makanan berbuka, ketupat, zakat, masjid.", color: "teal" },
+            { id: '4', month: 2, title: "Hari Perempuan (8 Mar)", match: [0, 1, 2], desc: "Equality, strong women, diverse careers, leadership, support.", color: "purple" },
+            { id: '5', month: 3, title: "Paskah (Easter)", match: [1, 2, 3], desc: "Telur hias, kelinci, pastel, keluarga, cokelat, brunch.", color: "yellow" },
+            { id: '6', month: 4, title: "Hari Ibu (Mei)", match: [2, 3, 4], desc: "Kasih sayang, bunga, kado, keluarga multi-generasi, spa day.", color: "rose" },
+            { id: '7', month: 5, title: "Musim Panas (Summer)", match: [3, 4, 5], desc: "Pantai, liburan, es krim, panas, travel, kacamata hitam.", color: "orange" },
+            { id: '8', month: 6, title: "Back to School", match: [4, 5, 6], desc: "Tas sekolah, alat tulis, belajar, ruang kelas, bus sekolah.", color: "blue" },
+            { id: '9', month: 9, title: "Halloween", match: [7, 8, 9], desc: "Kostum, labu, seram, permen, pesta, makeup karakter.", color: "orange" },
+            { id: '10', month: 10, title: "Black Friday / Cyber Mon", match: [8, 9, 10], desc: "Belanja, diskon, gadget, e-commerce, antrian, credit card.", color: "slate" },
+            { id: '11', month: 11, title: "Natal & Tahun Baru", match: [9, 10, 11], desc: "Pohon natal, salju, kado, pesta, kembang api, resolusi.", color: "red" },
+            { id: '12', month: 7, title: "Kemerdekaan RI (Agustus)", match: [5, 6, 7], desc: "Merah putih, lomba, upacara, tumpeng, semangat nasionalisme.", color: "red" }
+        ];
+
+        // Filter items where current month is in the 'match' window
+        // i.e., We should shoot NOW (currentMonth) for these events
+        const activeItems = seasonalDb.filter(item => item.match.includes(currentMonth));
+
+        // Map to UI format
+        return activeItems.slice(0, 4).map(item => { // Limit to 4 cards
+            let colorClasses = "";
+            let urgency = "Sedang";
+
+            // Urgency Logic: If currentMonth is the last index of match array -> High/Critical
+            const lastMatch = item.match[item.match.length - 1];
+            if (currentMonth === lastMatch) urgency = "Kritis (Terlambat)";
+            else if (currentMonth === item.match[item.match.length - 2]) urgency = "Tinggi";
+
+            switch (item.color) {
+                case 'pink': colorClasses = "bg-gradient-to-br from-pink-50 to-rose-50 border-pink-200 text-pink-700 hover:border-pink-300"; break;
+                case 'emerald': colorClasses = "bg-gradient-to-br from-emerald-50 to-teal-50 border-emerald-200 text-emerald-700 hover:border-emerald-300"; break;
+                case 'teal': colorClasses = "bg-gradient-to-br from-teal-50 to-cyan-50 border-teal-200 text-teal-700 hover:border-teal-300"; break;
+                case 'purple': colorClasses = "bg-gradient-to-br from-purple-50 to-violet-50 border-purple-200 text-purple-700 hover:border-purple-300"; break;
+                case 'yellow': colorClasses = "bg-gradient-to-br from-yellow-50 to-amber-50 border-yellow-200 text-amber-700 hover:border-amber-300"; break;
+                case 'rose': colorClasses = "bg-gradient-to-br from-rose-50 to-pink-50 border-rose-200 text-rose-700 hover:border-rose-300"; break;
+                case 'orange': colorClasses = "bg-gradient-to-br from-orange-50 to-amber-50 border-orange-200 text-orange-700 hover:border-orange-300"; break;
+                case 'blue': colorClasses = "bg-gradient-to-br from-blue-50 to-sky-50 border-blue-200 text-blue-700 hover:border-blue-300"; break;
+                case 'slate': colorClasses = "bg-gradient-to-br from-slate-50 to-gray-50 border-slate-200 text-slate-700 hover:border-slate-300"; break;
+                case 'red': colorClasses = "bg-gradient-to-br from-red-50 to-orange-50 border-red-200 text-red-700 hover:border-red-300"; break;
+                default: colorClasses = "bg-gradient-to-br from-slate-50 to-gray-50 border-slate-200 text-slate-700";
+            }
+
+            // Estimate target month name roughly
+            const targetMonthIdx = item.month;
+            const monthNames = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agt", "Sep", "Okt", "Nov", "Des"];
+
+            return {
+                title: item.title,
+                targetDate: `Target: ${monthNames[targetMonthIdx]}`,
+                urgency: urgency,
+                desc: item.desc,
+                color: colorClasses
+            };
+        });
+    };
+
+    const spotlightItems = getDynamicSpotlight();
 
     // --- INITIAL DATA (Translated Categories) ---
     const initialData = [
