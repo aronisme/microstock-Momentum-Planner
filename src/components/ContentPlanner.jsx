@@ -30,27 +30,12 @@ import {
     Heart
 } from 'lucide-react';
 import { generateAIContent, isAIConfigured } from '../utils/aiService';
+import microstockData from '../data/microstockData.json';
 
 const ContentPlanner = () => {
     // --- CALENDAR EVENTS DATA (Sample for 2025/2026 context) ---
-    const calendarEvents = [
-        { date: '2025-01-01', title: "Tahun Baru Masehi", type: 'holiday' },
-        { date: '2025-01-29', title: "Tahun Baru Imlek", type: 'cultural' },
-        { date: '2025-02-14', title: "Hari Valentine", type: 'commercial' },
-        { date: '2025-03-08', title: "Hari Perempuan Intl.", type: 'social' },
-        { date: '2025-03-17', title: "St. Patrick's Day", type: 'cultural' },
-        { date: '2025-03-20', title: "Awal Musim Semi", type: 'season' },
-        { date: '2025-03-31', title: "Idul Fitri (Est)", type: 'religious' },
-        { date: '2025-04-20', title: "Hari Paskah", type: 'religious' },
-        { date: '2025-04-22', title: "Hari Bumi", type: 'social' },
-        { date: '2025-05-11', title: "Hari Ibu (Intl)", type: 'commercial' },
-        { date: '2025-06-21', title: "Titik Balik Matahari", type: 'season' },
-        { date: '2025-07-04', title: "Kemerdekaan AS", type: 'holiday' },
-        { date: '2025-08-17', title: "Kemerdekaan RI", type: 'holiday-id' },
-        { date: '2025-10-31', title: "Halloween", type: 'commercial' },
-        { date: '2025-11-28', title: "Black Friday", type: 'commercial' },
-        { date: '2025-12-25', title: "Hari Natal", type: 'holiday' },
-    ];
+    // --- CALENDAR EVENTS DATA (Imported from JSON) ---
+    const calendarEvents = microstockData.calendarEvents;
 
     // --- DYNAMIC SPOTLIGHT LOGIC (3-Month Lead Time) ---
     const getDynamicSpotlight = () => {
@@ -59,20 +44,8 @@ const ContentPlanner = () => {
 
         // Microstock Strategy: Shoot 2-4 months ahead
         // database of events by target month (0-11)
-        const seasonalDb = [
-            { id: '1', month: 0, title: "Valentine & Imlek", match: [10, 11, 0], desc: "Romantis, merah muda, lampion, naga, amplop merah, couple goals.", color: "pink" },
-            { id: '2', month: 2, title: "Musim Semi (Spring)", match: [0, 1, 2], desc: "Bunga, bersih-bersih rumah, alergi, outdoor, fresh start.", color: "emerald" },
-            { id: '3', month: 2, title: "Ramadan & Idul Fitri", match: [0, 1, 2], desc: "Ibadah, keluarga, makanan berbuka, ketupat, zakat, masjid.", color: "teal" },
-            { id: '4', month: 2, title: "Hari Perempuan (8 Mar)", match: [0, 1, 2], desc: "Equality, strong women, diverse careers, leadership, support.", color: "purple" },
-            { id: '5', month: 3, title: "Paskah (Easter)", match: [1, 2, 3], desc: "Telur hias, kelinci, pastel, keluarga, cokelat, brunch.", color: "yellow" },
-            { id: '6', month: 4, title: "Hari Ibu (Mei)", match: [2, 3, 4], desc: "Kasih sayang, bunga, kado, keluarga multi-generasi, spa day.", color: "rose" },
-            { id: '7', month: 5, title: "Musim Panas (Summer)", match: [3, 4, 5], desc: "Pantai, liburan, es krim, panas, travel, kacamata hitam.", color: "orange" },
-            { id: '8', month: 6, title: "Back to School", match: [4, 5, 6], desc: "Tas sekolah, alat tulis, belajar, ruang kelas, bus sekolah.", color: "blue" },
-            { id: '9', month: 9, title: "Halloween", match: [7, 8, 9], desc: "Kostum, labu, seram, permen, pesta, makeup karakter.", color: "orange" },
-            { id: '10', month: 10, title: "Black Friday / Cyber Mon", match: [8, 9, 10], desc: "Belanja, diskon, gadget, e-commerce, antrian, credit card.", color: "slate" },
-            { id: '11', month: 11, title: "Natal & Tahun Baru", match: [9, 10, 11], desc: "Pohon natal, salju, kado, pesta, kembang api, resolusi.", color: "red" },
-            { id: '12', month: 7, title: "Kemerdekaan RI (Agustus)", match: [5, 6, 7], desc: "Merah putih, lomba, upacara, tumpeng, semangat nasionalisme.", color: "red" }
-        ];
+        // database of events by target month (0-11) (Imported from JSON)
+        const seasonalDb = microstockData.seasonalDb;
 
         // Filter items where current month is in the 'match' window
         // i.e., We should shoot NOW (currentMonth) for these events
@@ -104,11 +77,11 @@ const ContentPlanner = () => {
 
             // Estimate target month name roughly
             const targetMonthIdx = item.month;
-            const monthNames = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agt", "Sep", "Okt", "Nov", "Des"];
+            const monthNames = ["JANUARI", "FEBRUARI", "MARET", "APRIL", "MEI", "JUNI", "JULI", "AGUSTUS", "SEPTEMBER", "OKTOBER", "NOVEMBER", "DESEMBER"];
 
             return {
                 title: item.title,
-                targetDate: `Target: ${monthNames[targetMonthIdx]}`,
+                targetDate: monthNames[targetMonthIdx],
                 urgency: urgency,
                 desc: item.desc,
                 color: colorClasses
@@ -118,102 +91,23 @@ const ContentPlanner = () => {
 
     const spotlightItems = getDynamicSpotlight();
 
-    // --- INITIAL DATA (Translated Categories) ---
-    const initialData = [
-        {
-            id: 'finance',
-            category: 'Bisnis & Keuangan',
-            icon: <Banknote className="w-6 h-6 text-emerald-600" />,
-            color: 'bg-emerald-50 border-emerald-200 shadow-emerald-100',
-            items: [
-                "Budget Planning", "Personal Finance Planning", "Financial Stress", "Invoice Deadline",
-                "Monthly Billing", "Quarterly Report", "Annual Report", "Startup Pitch",
-                "Business Forecast", "Cash Flow Management", "Payroll Day", "Tax Refund",
-                "Audit Season", "Layoffs", "Hiring Season", "Business Growth",
-                "Business Failure", "Investment Planning", "Retirement Planning"
-            ]
-        },
-        {
-            id: 'health',
-            category: 'Kesehatan Mental & Wellness',
-            icon: <Heart className="w-6 h-6 text-rose-500" />,
-            color: 'bg-rose-50 border-rose-200 shadow-rose-100',
-            items: [
-                "Mental Health Awareness", "Burnout", "Work Stress", "Anxiety",
-                "Depression Awareness", "Self Care", "Therapy Session", "Healthy Lifestyle",
-                "Fitness Motivation", "Weight Loss Program", "Diet Planning", "Sleep Disorder",
-                "Meditation", "Mindfulness", "Emotional Healing"
-            ]
-        },
-        {
-            id: 'tech',
-            category: 'Teknologi & Digital',
-            icon: <Cpu className="w-6 h-6 text-sky-500" />,
-            color: 'bg-sky-50 border-sky-200 shadow-sky-100',
-            items: [
-                "Artificial Intelligence", "Automation", "Machine Learning Concept", "Data Privacy",
-                "Cyber Security", "Remote Work", "Hybrid Work", "Digital Nomad Life",
-                "App Launch", "SaaS Subscription", "System Update", "Software Bug / Error",
-                "Online Meeting", "Virtual Team", "Digital Detox"
-            ]
-        },
-        {
-            id: 'social',
-            category: 'Sosial & Gaya Hidup',
-            icon: <Users className="w-6 h-6 text-violet-500" />,
-            color: 'bg-violet-50 border-violet-200 shadow-violet-100',
-            items: [
-                "Work-Life Balance", "Career Change", "New Job", "Job Interview",
-                "Resignation", "Promotion", "Office Politics", "Teamwork",
-                "Leadership", "Employee Motivation", "Overtime Work", "Deadline Pressure",
-                "Career Failure", "Personal Success"
-            ]
-        },
-        {
-            id: 'edu',
-            category: 'Edukasi & Self Dev',
-            icon: <GraduationCap className="w-6 h-6 text-amber-500" />,
-            color: 'bg-amber-50 border-amber-200 shadow-amber-100',
-            items: [
-                "Online Learning", "E-learning Platform", "Exam Stress", "Graduation Exam",
-                "Skill Upgrade", "Language Learning", "Certification Program", "Internship Season",
-                "Study Abroad", "Personal Development", "Productivity Improvement"
-            ]
-        },
-        {
-            id: 'marketing',
-            category: 'Marketing & E-Commerce',
-            icon: <ShoppingBag className="w-6 h-6 text-orange-500" />,
-            color: 'bg-orange-50 border-orange-200 shadow-orange-100',
-            items: [
-                "Product Launch", "Product Promotion", "Customer Review", "Brand Loyalty",
-                "Subscription Renewal", "Flash Sale", "Referral Program", "Loyalty Program",
-                "Abandoned Cart", "Upselling", "Cross Selling", "Customer Support"
-            ]
-        },
-        {
-            id: 'home',
-            category: 'Rumah & Keluarga',
-            icon: <Home className="w-6 h-6 text-teal-500" />,
-            color: 'bg-teal-50 border-teal-200 shadow-teal-100',
-            items: [
-                "Buying House", "Selling House", "Moving House", "Home Office Setup",
-                "Interior Design", "Family Time", "Parenting", "Pregnancy",
-                "Baby Shower", "Child Education", "Retirement Life"
-            ]
-        },
-        {
-            id: 'micro',
-            category: 'Micro-Moments (Niche)',
-            icon: <Clock className="w-6 h-6 text-indigo-500" />,
-            color: 'bg-indigo-50 border-indigo-200 shadow-indigo-100',
-            items: [
-                "Monday Motivation", "Coffee Break", "Team Meeting", "Brainstorming",
-                "Late Night Work", "Weekend Relax", "Morning Routine", "Work From Cafe",
-                "Waiting Deadline", "Last Minute Rush"
-            ]
-        }
-    ];
+    // --- INITIAL DATA (Imported from JSON & Icons Mapped) ---
+    // Icon Mapping
+    const iconMap = {
+        Banknote: <Banknote className="w-6 h-6 text-emerald-600" />,
+        Heart: <Heart className="w-6 h-6 text-rose-500" />,
+        Cpu: <Cpu className="w-6 h-6 text-sky-500" />,
+        Users: <Users className="w-6 h-6 text-violet-500" />,
+        GraduationCap: <GraduationCap className="w-6 h-6 text-amber-500" />,
+        ShoppingBag: <ShoppingBag className="w-6 h-6 text-orange-500" />,
+        Home: <Home className="w-6 h-6 text-teal-500" />,
+        Clock: <Clock className="w-6 h-6 text-indigo-500" />
+    };
+
+    const initialData = microstockData.categories.map(cat => ({
+        ...cat,
+        icon: iconMap[cat.iconName] || <Sparkles className="w-6 h-6" />
+    }));
 
     // --- STATE ---
     const [data, setData] = useState(initialData);
@@ -269,9 +163,16 @@ const ContentPlanner = () => {
 
     const handleGenerateMoreIdeas = async (categoryId, categoryName) => {
         setGeneratingCategory(categoryId);
-        const prompt = `Act as a top-selling Microstock Contributor. Give me 5 NEW, specific, and commercially viable stock photography or footage concepts for the category "${categoryName}". 
-    Focus on visual descriptions and current market trends. 
-    Return ONLY the list of 5 items, separated by newlines, no numbering, no intro text.`;
+
+        const prompt = `Act as a top-selling Microstock Contributor. Give me 5 NEW, specific, and commercially viable stock photography concepts for the category "${categoryName}". 
+    
+    CRITICAL INSTRUCTIONS:
+    1. Output format: SHORT KEYWORD PHRASES only (2-5 words max).
+    2. Example: "Modern Office Meeting", "Financial Growth Graph", "Remote Work Lifestyle".
+    3. NO long sentences. NO descriptions.
+    4. Avoid tropes: NO "diverse group", NO "smiling at camera".
+    
+    Return ONLY the list of 5 items, separated by newlines, no numbering.`;
 
         const result = await generateAIContent(prompt);
 
@@ -279,7 +180,7 @@ const ContentPlanner = () => {
             const newItems = result.split('\n').filter(line => line.trim().length > 0).map(line => line.replace(/^[-\d\.]+\s*/, '').trim());
             setData(prevData => prevData.map(cat => {
                 if (cat.id === categoryId) {
-                    return { ...cat, items: [...cat.items, ...newItems] };
+                    return { ...cat, items: [...newItems, ...cat.items] };
                 }
                 return cat;
             }));
@@ -296,11 +197,16 @@ const ContentPlanner = () => {
         setModalOpen(true);
         setAiSubThemes([]);
 
-        const prompt = `Act as a Microstock Expert. Provide 10 specific visual sub-themes, unique shooting angles, or high-value keywords for the stock concept: "${item}". 
-    Focus on what buyers are searching for (commercial/lifestyle/business contexts).
-    IMPORTANT: Output ONLY a raw list of 10 lines. 
-    NO numbering (1. 2.). NO bullet points (-). 
-    One concept/keyword per line. English language only.`;
+        const prompt = `Act as a Microstock Expert. Provide 10 high-value KEYWORD PHRASES (2-5 words) for the stock concept: "${item}". 
+    Focus on commercially viable angles.
+
+    CRITICAL INSTRUCTIONS:
+    1. Output format: SHORT KEYWORD PHRASES only (2-5 words max).
+    2. Example: "Pensive Mood Portrait", "Golden Hour Lighting", "Work From Home Setup".
+    3. NO long sentences. NO descriptions.
+    4. Avoid tropes: NO "diverse group", NO "smiling at camera".
+    
+    Return ONLY the list of 10 items, separated by newlines, no numbering.`;
 
         const result = await generateAIContent(prompt);
 
@@ -426,12 +332,14 @@ const ContentPlanner = () => {
         <div className="min-h-screen bg-slate-50/50 text-slate-800 font-sans selection:bg-orange-100 selection:text-orange-900">
 
             {/* HEADER HERO (STICKY) */}
-            <div className="bg-white/90 backdrop-blur-md border-b border-slate-200 sticky top-0 z-20 shadow-sm">
+            <div className="bg-white/80 backdrop-blur-xl border-b border-white/50 sticky top-0 z-50 shadow-sm transition-all duration-300">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div>
-                            <h1 className="text-2xl md:text-3xl font-extrabold bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 bg-clip-text text-transparent flex items-center gap-2">
-                                <Camera className="text-orange-500 w-7 h-7" />
+                            <h1 className="text-2xl md:text-3xl font-extrabold text-slate-800 flex items-center gap-3 tracking-tight group cursor-pointer transition-colors duration-300 hover:text-orange-600 select-none">
+                                <div className="p-2 bg-orange-50 rounded-xl border border-orange-100 group-hover:rotate-12 group-hover:scale-110 group-hover:bg-orange-100 transition-all duration-300 shadow-sm group-hover:shadow-md">
+                                    <Camera className="text-orange-600 w-6 h-6 transition-transform" />
+                                </div>
                                 Momentum Planner
                                 <span className="text-xs font-bold px-2.5 py-1 bg-gradient-to-r from-orange-100 to-amber-100 text-orange-700 rounded-full border border-orange-200 ml-2 align-middle flex items-center gap-1">
                                     <Sparkles className="w-3 h-3" />
@@ -493,9 +401,9 @@ const ContentPlanner = () => {
                         <div className="mt-5 flex gap-2 overflow-x-auto pb-2 scrollbar-hide mask-fade-right">
                             <button
                                 onClick={() => setSelectedCategory('Semua')}
-                                className={`px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-all border ${selectedCategory === 'Semua'
-                                    ? 'bg-slate-800 text-white shadow-lg border-slate-800 scale-105'
-                                    : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50 hover:border-slate-300'
+                                className={`px-5 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-all border backdrop-blur-sm ${selectedCategory === 'Semua'
+                                    ? 'bg-slate-800 text-white shadow-lg shadow-slate-200/50 scale-105 border-slate-800'
+                                    : 'bg-white/50 text-slate-600 border-slate-200 hover:bg-white hover:border-slate-300'
                                     }`}
                             >
                                 Semua Topik
@@ -518,8 +426,36 @@ const ContentPlanner = () => {
                 </div>
             </div>
 
+            {/* HERO BANNER - WELCOMING VIBE */}
+            {viewMode === 'ideas' && (
+                <div className="relative overflow-hidden mb-8 pt-12 pb-16">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+                        <span className="inline-block py-1.5 px-4 rounded-full bg-orange-100/80 border border-orange-200 text-orange-700 text-xs font-bold mb-6 animate-in slide-in-from-bottom-2 shadow-sm">
+                            ✨ AI-Powered Creative Assistant
+                        </span>
+                        <h1 className="text-5xl md:text-7xl font-extrabold text-slate-800 mb-6 tracking-tight leading-tight animate-in slide-in-from-bottom-4">
+                            Create content that <br className="hidden md:block" />
+                            <span className="text-gradient-primary relative">
+                                Sells itself.
+                                <svg className="absolute w-full h-3 -bottom-1 left-0 text-orange-300 -z-10 opacity-60" viewBox="0 0 100 10" preserveAspectRatio="none">
+                                    <path d="M0 5 Q 50 10 100 5" stroke="currentColor" strokeWidth="8" fill="none" />
+                                </svg>
+                            </span>
+                        </h1>
+                        <p className="text-lg md:text-xl text-slate-600 max-w-2xl mx-auto mb-10 animate-in slide-in-from-bottom-5 leading-relaxed font-medium">
+                            Temukan peluang musiman yang tinggi permintaan & buat prompt profesional dalam hitungan detik.
+                        </p>
+                    </div>
+
+                    {/* Decorative Blobs */}
+                    <div className="absolute top-0 left-1/4 w-96 h-96 bg-orange-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-float"></div>
+                    <div className="absolute top-10 right-1/4 w-96 h-96 bg-pink-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-float" style={{ animationDelay: '2s' }}></div>
+                    <div className="absolute -bottom-20 left-1/3 w-96 h-96 bg-emerald-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-float" style={{ animationDelay: '4s' }}></div>
+                </div>
+            )}
+
             {/* MAIN CONTENT */}
-            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
 
                 {viewMode === 'ideas' ? (
                     <>
@@ -540,16 +476,17 @@ const ContentPlanner = () => {
                                         key={idx}
                                         onClick={(e) => handleDraftContent(item.title, e)}
                                         className={`
-                      relative p-5 rounded-2xl border cursor-pointer hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden
-                      bg-white ${item.color.split(' ')[0]} ${item.color.split(' ')[2]} border-l-4
+                      glass-card relative p-6 rounded-3xl cursor-pointer overflow-hidden group
+                      bg-white/60 border border-white/60
                     `}
                                     >
                                         {/* Decorative Circle */}
                                         <div className="absolute top-0 right-0 -mr-4 -mt-4 w-20 h-20 rounded-full bg-white opacity-20 pointer-events-none"></div>
 
                                         <div className="flex justify-between items-start mb-2 relative z-10">
-                                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/60 backdrop-blur-sm border border-white/50 text-slate-700`}>
-                                                🗓 {item.targetDate}
+                                            <span className="text-[10px] font-bold px-3 py-1 rounded-full bg-slate-900 text-white shadow-sm border border-slate-700 flex items-center gap-2 opacity-90 group-hover:opacity-100 transition-opacity tracking-wide">
+                                                <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse"></span>
+                                                TARGET: {item.targetDate.toUpperCase()}
                                             </span>
                                             {item.urgency === 'Kritis' && (
                                                 <span className="flex h-2 w-2">
@@ -568,7 +505,7 @@ const ContentPlanner = () => {
                                             {/* Abstract placeholder for icon */}
                                         </div>
 
-                                        <div className="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity bg-white p-1 rounded-full shadow-sm text-orange-500">
+                                        <div className="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-all duration-300 bg-orange-500 text-white p-2 rounded-full shadow-lg transform translate-y-2 group-hover:translate-y-0">
                                             <Wand2 className="w-4 h-4" />
                                         </div>
                                     </div>
@@ -717,7 +654,7 @@ const ContentPlanner = () => {
                     </>
                 ) : (
                     /* CALENDAR VIEW */
-                    <div className="bg-white rounded-3xl border border-slate-200 shadow-xl shadow-slate-200/50 animate-in fade-in zoom-in-95 duration-300 overflow-hidden">
+                    <div className="glass-card rounded-3xl overflow-hidden animate-in fade-in slide-in-from-bottom-6 duration-700">
                         {/* Calendar Header */}
                         <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-gradient-to-r from-slate-50 to-white">
                             <h2 className="text-xl font-extrabold text-slate-800 flex items-center gap-2">
@@ -779,7 +716,7 @@ const ContentPlanner = () => {
                                     <ListPlus className="w-6 h-6" />
                                 </div>
                                 <div>
-                                    <h3 className="text-lg font-extrabold text-slate-800">Sudut Visual & Keyword</h3>
+                                    <h3 className="text-lg font-extrabold text-slate-800">Ide Keyword & Konsep</h3>
                                     <p className="text-sm text-slate-500">Konsep: <span className="font-bold text-orange-600">{currentDraftTopic}</span></p>
                                 </div>
                             </div>

@@ -1,0 +1,403 @@
+{
+    "calendarEvents": [
+        {
+            "date": "2025-01-01",
+            "title": "Tahun Baru Masehi",
+            "type": "holiday"
+        },
+        {
+            "date": "2025-01-29",
+            "title": "Tahun Baru Imlek",
+            "type": "cultural"
+        },
+        {
+            "date": "2025-02-14",
+            "title": "Hari Valentine",
+            "type": "commercial"
+        },
+        {
+            "date": "2025-03-08",
+            "title": "Hari Perempuan Intl.",
+            "type": "social"
+        },
+        {
+            "date": "2025-03-17",
+            "title": "St. Patrick's Day",
+            "type": "cultural"
+        },
+        {
+            "date": "2025-03-20",
+            "title": "Awal Musim Semi",
+            "type": "season"
+        },
+        {
+            "date": "2025-03-31",
+            "title": "Idul Fitri (Est)",
+            "type": "religious"
+        },
+        {
+            "date": "2025-04-20",
+            "title": "Hari Paskah",
+            "type": "religious"
+        },
+        {
+            "date": "2025-04-22",
+            "title": "Hari Bumi",
+            "type": "social"
+        },
+        {
+            "date": "2025-05-11",
+            "title": "Hari Ibu (Intl)",
+            "type": "commercial"
+        },
+        {
+            "date": "2025-06-21",
+            "title": "Titik Balik Matahari",
+            "type": "season"
+        },
+        {
+            "date": "2025-07-04",
+            "title": "Kemerdekaan AS",
+            "type": "holiday"
+        },
+        {
+            "date": "2025-08-17",
+            "title": "Kemerdekaan RI",
+            "type": "holiday-id"
+        },
+        {
+            "date": "2025-10-31",
+            "title": "Halloween",
+            "type": "commercial"
+        },
+        {
+            "date": "2025-11-28",
+            "title": "Black Friday",
+            "type": "commercial"
+        },
+        {
+            "date": "2025-12-25",
+            "title": "Hari Natal",
+            "type": "holiday"
+        }
+    ],
+    "seasonalDb": [
+        {
+            "id": "1",
+            "month": 0,
+            "title": "Valentine & Imlek",
+            "match": [
+                10,
+                11,
+                0
+            ],
+            "desc": "Romantis, merah muda, lampion, naga, amplop merah, couple goals.",
+            "color": "pink"
+        },
+        {
+            "id": "2",
+            "month": 2,
+            "title": "Musim Semi (Spring)",
+            "match": [
+                0,
+                1,
+                2
+            ],
+            "desc": "Bunga, bersih-bersih rumah, alergi, outdoor, fresh start.",
+            "color": "emerald"
+        },
+        {
+            "id": "3",
+            "month": 2,
+            "title": "Ramadan & Idul Fitri",
+            "match": [
+                0,
+                1,
+                2
+            ],
+            "desc": "Ibadah, keluarga, makanan berbuka, ketupat, zakat, masjid.",
+            "color": "teal"
+        },
+        {
+            "id": "4",
+            "month": 2,
+            "title": "Hari Perempuan (8 Mar)",
+            "match": [
+                0,
+                1,
+                2
+            ],
+            "desc": "Equality, strong women, diverse careers, leadership, support.",
+            "color": "purple"
+        },
+        {
+            "id": "5",
+            "month": 3,
+            "title": "Paskah (Easter)",
+            "match": [
+                1,
+                2,
+                3
+            ],
+            "desc": "Telur hias, kelinci, pastel, keluarga, cokelat, brunch.",
+            "color": "yellow"
+        },
+        {
+            "id": "6",
+            "month": 4,
+            "title": "Hari Ibu (Mei)",
+            "match": [
+                2,
+                3,
+                4
+            ],
+            "desc": "Kasih sayang, bunga, kado, keluarga multi-generasi, spa day.",
+            "color": "rose"
+        },
+        {
+            "id": "7",
+            "month": 5,
+            "title": "Musim Panas (Summer)",
+            "match": [
+                3,
+                4,
+                5
+            ],
+            "desc": "Pantai, liburan, es krim, panas, travel, kacamata hitam.",
+            "color": "orange"
+        },
+        {
+            "id": "8",
+            "month": 6,
+            "title": "Back to School",
+            "match": [
+                4,
+                5,
+                6
+            ],
+            "desc": "Tas sekolah, alat tulis, belajar, ruang kelas, bus sekolah.",
+            "color": "blue"
+        },
+        {
+            "id": "9",
+            "month": 9,
+            "title": "Halloween",
+            "match": [
+                7,
+                8,
+                9
+            ],
+            "desc": "Kostum, labu, seram, permen, pesta, makeup karakter.",
+            "color": "orange"
+        },
+        {
+            "id": "10",
+            "month": 10,
+            "title": "Black Friday / Cyber Mon",
+            "match": [
+                8,
+                9,
+                10
+            ],
+            "desc": "Belanja, diskon, gadget, e-commerce, antrian, credit card.",
+            "color": "slate"
+        },
+        {
+            "id": "11",
+            "month": 11,
+            "title": "Natal & Tahun Baru",
+            "match": [
+                9,
+                10,
+                11
+            ],
+            "desc": "Pohon natal, salju, kado, pesta, kembang api, resolusi.",
+            "color": "red"
+        },
+        {
+            "id": "12",
+            "month": 7,
+            "title": "Kemerdekaan RI (Agustus)",
+            "match": [
+                5,
+                6,
+                7
+            ],
+            "desc": "Merah putih, lomba, upacara, tumpeng, semangat nasionalisme.",
+            "color": "red"
+        }
+    ],
+    "categories": [
+        {
+            "id": "finance",
+            "category": "Bisnis & Keuangan",
+            "iconName": "Banknote",
+            "color": "bg-emerald-50 border-emerald-200 shadow-emerald-100",
+            "items": [
+                "Budget Planning",
+                "Personal Finance Planning",
+                "Financial Stress",
+                "Invoice Deadline",
+                "Monthly Billing",
+                "Quarterly Report",
+                "Annual Report",
+                "Startup Pitch",
+                "Business Forecast",
+                "Cash Flow Management",
+                "Payroll Day",
+                "Tax Refund",
+                "Audit Season",
+                "Layoffs",
+                "Hiring Season",
+                "Business Growth",
+                "Business Failure",
+                "Investment Planning",
+                "Retirement Planning"
+            ]
+        },
+        {
+            "id": "health",
+            "category": "Kesehatan Mental & Wellness",
+            "iconName": "Heart",
+            "color": "bg-rose-50 border-rose-200 shadow-rose-100",
+            "items": [
+                "Mental Health Awareness",
+                "Burnout",
+                "Work Stress",
+                "Anxiety",
+                "Depression Awareness",
+                "Self Care",
+                "Therapy Session",
+                "Healthy Lifestyle",
+                "Fitness Motivation",
+                "Weight Loss Program",
+                "Diet Planning",
+                "Sleep Disorder",
+                "Meditation",
+                "Mindfulness",
+                "Emotional Healing"
+            ]
+        },
+        {
+            "id": "tech",
+            "category": "Teknologi & Digital",
+            "iconName": "Cpu",
+            "color": "bg-sky-50 border-sky-200 shadow-sky-100",
+            "items": [
+                "Artificial Intelligence",
+                "Automation",
+                "Machine Learning Concept",
+                "Data Privacy",
+                "Cyber Security",
+                "Remote Work",
+                "Hybrid Work",
+                "Digital Nomad Life",
+                "App Launch",
+                "SaaS Subscription",
+                "System Update",
+                "Software Bug / Error",
+                "Online Meeting",
+                "Virtual Team",
+                "Digital Detox"
+            ]
+        },
+        {
+            "id": "social",
+            "category": "Sosial & Gaya Hidup",
+            "iconName": "Users",
+            "color": "bg-violet-50 border-violet-200 shadow-violet-100",
+            "items": [
+                "Work-Life Balance",
+                "Career Change",
+                "New Job",
+                "Job Interview",
+                "Resignation",
+                "Promotion",
+                "Office Politics",
+                "Teamwork",
+                "Leadership",
+                "Employee Motivation",
+                "Overtime Work",
+                "Deadline Pressure",
+                "Career Failure",
+                "Personal Success"
+            ]
+        },
+        {
+            "id": "edu",
+            "category": "Edukasi & Self Dev",
+            "iconName": "GraduationCap",
+            "color": "bg-amber-50 border-amber-200 shadow-amber-100",
+            "items": [
+                "Online Learning",
+                "E-learning Platform",
+                "Exam Stress",
+                "Graduation Exam",
+                "Skill Upgrade",
+                "Language Learning",
+                "Certification Program",
+                "Internship Season",
+                "Study Abroad",
+                "Personal Development",
+                "Productivity Improvement"
+            ]
+        },
+        {
+            "id": "marketing",
+            "category": "Marketing & E-Commerce",
+            "iconName": "ShoppingBag",
+            "color": "bg-orange-50 border-orange-200 shadow-orange-100",
+            "items": [
+                "Product Launch",
+                "Product Promotion",
+                "Customer Review",
+                "Brand Loyalty",
+                "Subscription Renewal",
+                "Flash Sale",
+                "Referral Program",
+                "Loyalty Program",
+                "Abandoned Cart",
+                "Upselling",
+                "Cross Selling",
+                "Customer Support"
+            ]
+        },
+        {
+            "id": "home",
+            "category": "Rumah & Keluarga",
+            "iconName": "Home",
+            "color": "bg-teal-50 border-teal-200 shadow-teal-100",
+            "items": [
+                "Buying House",
+                "Selling House",
+                "Moving House",
+                "Home Office Setup",
+                "Interior Design",
+                "Family Time",
+                "Parenting",
+                "Pregnancy",
+                "Baby Shower",
+                "Child Education",
+                "Retirement Life"
+            ]
+        },
+        {
+            "id": "micro",
+            "category": "Micro-Moments (Niche)",
+            "iconName": "Clock",
+            "color": "bg-indigo-50 border-indigo-200 shadow-indigo-100",
+            "items": [
+                "Monday Motivation",
+                "Coffee Break",
+                "Team Meeting",
+                "Brainstorming",
+                "Late Night Work",
+                "Weekend Relax",
+                "Morning Routine",
+                "Work From Cafe",
+                "Waiting Deadline",
+                "Last Minute Rush"
+            ]
+        }
+    ]
+}
